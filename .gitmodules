@@ -1,0 +1,4 @@
+[submodule "libs/avr-libstdcpp"]
+	path = libs/avr-libstdcpp
+	url = https://github.com/modm-io/avr-libstdcpp
+	branch = master
