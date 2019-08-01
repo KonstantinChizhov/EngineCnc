@@ -1,0 +1,23 @@
+
+
+avrEnv = Environment(DEVICE_NAME = 'atmega1284p', 
+	toolpath = ['#/../Mcucpp/scons'], 
+	tools=['mcucpp'])
+
+avrEnv.Append(CPPPATH = ['#/inc', '#/./'])
+avrEnv.Append(CCFLAGS = "-Os")
+
+#select used board
+boardName = 'melzi'
+
+avrEnv.Append(CPPPATH = ['#/boards/%s' % boardName ])
+
+app_objects = avrEnv.Object([
+	'main.cpp',
+	'#/boards/%s/board.cpp' % boardName])
+
+elf = avrEnv.Program('EngineCnc', app_objects)
+lss = avrEnv.Disassembly(elf)
+hex = avrEnv.Hex(elf)
+
+
