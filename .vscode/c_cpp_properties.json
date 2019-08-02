@@ -7,7 +7,9 @@
                 "${workspaceFolder}/../mcucpp/3rdparty/include",
                 "${workspaceFolder}/../mcucpp/mcucpp",
                 "${workspaceFolder}/../mcucpp/mcucpp/AVR",
-                "${workspaceFolder}/../mcucpp/mcucpp/AVR/atmega1284p"
+                "${workspaceFolder}/../mcucpp/mcucpp/AVR/atmega1284p",
+                "${workspaceFolder}/libs/avr-libstdcpp/include",
+                "${workspaceFolder}/Boards/melzi"
             ],
             "defines": [
                 "_DEBUG",

@@ -1,35 +1,36 @@
 
 #pragma once
 
-#include <template_utils.h>
+#include <algorithm>
+#include <array>
+#include <containers/span.h>
 
 namespace EngineCnc
 {
-template <class Stepper, class Endstop, class T>
+
+template <class T>
+using span = Mcucpp::Containers::span<T>;
+
+template <class Stepper, class Endstop, class CoordT>
 class StepperController
 {
 public:
-    typdef typename Stepper::DataT DataT;
+    typedef typename Stepper::DataT DataT;
 
 protected:
-    T _denominator;
-    T _numerator[Stepper::Count];
-    T _error[Stepper::Count];
-    T _position[Stepper::Count];
+    std::array<CoordT, Stepper::Count> _numerator;
+    std::array<CoordT, Stepper::Count> _error;
+    std::array<CoordT, Stepper::Count> _position;
+    std::array<int_fast8_t, Stepper::Count> _direction;
+    CoordT _denominator;
     uint32_t _stepCount;
-    int_fast8_t _direction[Stepper::Count];
     DataT _directionPositiveMask;
     DataT _directionNegativeMask;
 
 public:
-    typdef typename Stepper::DataT DataT;
-
     StepperController()
-        : _numerator{0},
-          _error{0},
-          _position{0},
-          _stepCount{0} _denominator{0},
-          _direction{0},
+        : _denominator{0},
+          _stepCount{0},
           _directionPositiveMask{0},
           _directionNegativeMask{0}
     {
@@ -60,7 +61,7 @@ public:
         return _stepCount;
     }
 
-    void SetPosition(int indx, T value)
+    void SetPosition(int indx, CoordT value)
     {
         if (indx < Stepper::Count)
         {
@@ -68,20 +69,20 @@ public:
         }
     }
 
-    T GetPosition(int indx)
+    CoordT GetPosition(int indx)
     {
         return indx < Stepper::Count ? _position[indx] : 0;
     }
 
-    void MoveTo(T targetPosition[Stepper::Count])
+    void MoveTo(span<CoordT> targetPosition)
     {
         _stepCount = 0;
-        _denominator = *Mcucpp::Util::max_element(targetPosition, targetPosition + Stepper::Count);
+        _denominator = *std::max_element(std::begin(targetPosition), std::end(targetPosition));
         DataT directionPositiveMask = 0;
         DataT directionNegativeMask = 0;
 
         DataT mask = 1;
-        for (fast_int8_t i = 0; i < Stepper::Count; i++)
+        for (uint_fast8_t i = 0; i < Stepper::Count; i++)
         {
             //_error[i] = 0;
             if (_position[i] > targetPosition[i])

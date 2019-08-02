@@ -3,34 +3,47 @@
 
 namespace EngineCnc
 {
-template <class StepPins, class DirPins, class EnablePins>
+template <class StepPinsT, class DirPinsT, class EnablePinsT, class DelayT, unsigned MinPulseDelay>
 class StepDirStepper
 {
 public:
-    typedef typename StepPins::DataT DataT;
-    static constexpr int Count = StepPins::Length;
+    typedef typename StepPinsT::DataT DataT;
+    static constexpr int Count = StepPinsT::Length;
     static constexpr DataT Mask = (1 << Count) - 1;
+    static DelayT delay;
+
+    static void Init()
+    {
+        StepPinsT::SetConfiguration(StepPinsT::Out);
+        DirPinsT::SetConfiguration(DirPinsT::Out);
+        EnablePinsT::SetConfiguration(EnablePinsT::Out);
+    }
 
     static void StepPulseBegin(DataT value)
     {
-        StepPins::Write(value);
+        StepPinsT::Write(value);
+        delay.Start();
     }
     static void StepPulseEnd()
     {
-        StepPins::Write(0);
+        delay.Wait(MinPulseDelay);
+        StepPinsT::Write(0);
     }
     static void SetDirection(DataT value)
     {
-        DirPins::Write(value);
+        DirPinsT::Write(value);
     }
     static void Enable()
     {
-        EnablePins::Write(Mask);
+        EnablePinsT::Write(Mask);
     }
     static void Disable()
     {
-        EnablePins::Write(0);
+        EnablePinsT::Write(0);
     }
 };
+
+template <class StepPinsT, class DirPinsT, class EnablePinsT, class DelayT, unsigned MinPulseDelay>
+DelayT StepDirStepper<StepPinsT, DirPinsT, EnablePinsT, DelayT, MinPulseDelay>::delay {0};
 
 } // namespace EngineCnc

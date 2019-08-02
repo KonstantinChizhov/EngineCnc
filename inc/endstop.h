@@ -12,9 +12,9 @@ public:
     static constexpr DataT Mask = (1 << Count) - 1;
     static void Init()
     {
-        MinEndstopPins::SetConfiruration(MinEndstopPins::In);
+        MinEndstopPins::SetConfiguration(MinEndstopPins::In);
         MinEndstopPins::SetPullUp(MinEndstopPins::PullUp);
-        MaxEndStopPins::SetConfiruration(MaxEndStopPins::In);
+        MaxEndStopPins::SetConfiguration(MaxEndStopPins::In);
         MaxEndStopPins::SetPullUp(MaxEndStopPins::PullUp);
     }
 

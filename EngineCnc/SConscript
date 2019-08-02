@@ -4,13 +4,19 @@ avrEnv = Environment(DEVICE_NAME = 'atmega1284p',
 	toolpath = ['#/../Mcucpp/scons'], 
 	tools=['mcucpp'])
 
+
 avrEnv.Append(CPPPATH = ['#/inc', '#/./'])
 avrEnv.Append(CCFLAGS = "-Os")
 
 #select used board
 boardName = 'melzi'
-
+# add board to include path
 avrEnv.Append(CPPPATH = ['#/boards/%s' % boardName ])
+
+# add avr-libstdcpp to include path for AVR targets
+device = avrEnv['DEVICE']
+if device['arch']['name'] == 'AtMega':
+	avrEnv.Append(CPPPATH = ['#/libs/avr-libstdcpp/include'])
 
 app_objects = avrEnv.Object([
 	'main.cpp',
